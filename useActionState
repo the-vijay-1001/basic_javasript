@@ -1,0 +1,31 @@
+import { useActionState } from "react";
+
+function SaveName() {
+  const [error, submit, isPending] = useActionState(
+    async (_, name) => {
+      if (!name) throw new Error("Name is required");
+      await fakeApiSave(name);
+    },
+    null
+  );
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        submit(e.target, e.target.name.value);
+      }}
+    >
+      <input name="name" placeholder="Enter name" />
+      <button disabled={isPending}>
+        {isPending ? "Saving..." : "Save"}
+      </button>
+      {error && <p style={{ color: "red" }}>{error.message}</p>}
+    </form>
+  );
+}
+
+// Fake API call
+async function fakeApiSave(name) {
+  return new Promise((resolve) => setTimeout(resolve, 1000));
+}
